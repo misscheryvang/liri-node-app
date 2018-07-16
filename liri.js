@@ -2,8 +2,10 @@ require("dotenv").config();
 
 var keys = require("./keys.js")
 
+// Save user's command chocie in variable
 var options = process.argv[2]
 
+// Function to determine Liri's command
 function liriDoThis() {
     if (options.toLowerCase() === "my-tweets") {
         tweetsRequest();
@@ -25,7 +27,10 @@ function tweetsRequest() {
     var params = { screen_name: 'vang_chery', count: 20 };
     client.get('statuses/user_timeline', params, function (error, tweets, response) {
         if (!error) {
-            console.log(tweets[0].text);
+            for (var i = 0; i < tweets.length; i++) {
+                var text = tweets[i].text;
+                console.log("Tweets: " + text);
+            }
         }
     });
 };
@@ -38,12 +43,17 @@ function songRequest() {
 
     var song = process.argv[3];
 
+    if (!song) {
+        song = "The Sign";
+    };
+
     spotify.search({ type: 'track', query: song }, function (err, data) {
         if (err) {
             return console.log('Error occurred: ' + err);
         }
-
-        console.log("Artist(s): " + data.name);
+        console.log("Artist: " + data.tracks.items[0].artists[0].name + "\nSong name: "
+            + data.tracks.items[0].name + "\nPreview Link: " + data.tracks.items[0].preview_url)
+            + "\nAlbum Name: " + data.tracks.items[0].album.name;
     });
 };
 
@@ -52,13 +62,11 @@ function movieRequest() {
 
     var request = require('request');
 
-    // Grabs movie name and store it in a variable
     var movieName = process.argv[3];
 
     // Then run a request to the OMDB API with the movie specified
     var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
 
-    // This logs the movie information
     request(queryUrl, function (error, response, data) {
         if (!error && response.statusCode === 200) {
             console.log("Title: " + JSON.parse(data).Title + "\nRelease Year: " + JSON.parse(data).Year +
