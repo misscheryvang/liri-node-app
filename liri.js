@@ -41,7 +41,7 @@ function songRequest() {
 
     var spotify = new Spotify(keys.spotify);
 
-    var song = process.argv[3];
+    var song = process.argv.slice(3).join(" ");
 
     if (!song) {
         song = "The Sign";
